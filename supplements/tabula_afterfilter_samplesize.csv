@@ -1,0 +1,69 @@
+"","n_cells","n_cells_3m","n_cells_18m","n_cells_24m","n_indv","n_indv_3m","n_indv_18m","n_indv_24m"
+"lung.bronchial smooth muscle cell",2059,362,944,753,12,4,4,4
+"lung.fibroblast of lung",455,101,169,185,12,4,4,4
+"lung.vein endothelial cell",149,36,60,53,12,4,4,4
+"lung.adventitial cell",245,96,98,51,12,4,4,4
+"lung.myeloid dendritic cell",373,52,108,213,12,4,4,4
+"lung.smooth muscle cell of the pulmonary artery",110,54,47,9,11,4,4,3
+"lung.pulmonary interstitial fibroblast",36,25,4,7,10,4,4,2
+"lung.dendritic cell",62,10,9,43,9,2,3,4
+"lung.endothelial cell of lymphatic vessel",91,43,13,35,10,3,3,4
+"lung.non-classical monocyte",134,41,36,57,12,4,4,4
+"lung.classical monocyte",175,41,80,54,12,4,4,4
+"lung.B cell",271,50,77,144,12,4,4,4
+"lung.CD4-positive, alpha-beta T cell",56,33,22,1,9,4,4,1
+"lung.NK cell",44,19,18,7,10,4,4,2
+"lung.type II pneumocyte",159,88,38,33,12,4,4,4
+"lung.ciliated columnar cell of tracheobronchial tree",50,19,14,17,10,4,3,3
+"lung.CD8-positive, alpha-beta T cell",118,8,48,62,11,3,4,4
+"lung.neutrophil",117,23,59,35,12,4,4,4
+"lung.leukocyte",38,2,5,31,7,2,3,2
+"lung.club cell of bronchiole",21,5,5,11,10,3,3,4
+"lung.pericyte cell",35,12,19,4,10,4,3,3
+"lung.regulatory T cell",47,1,20,26,9,1,4,4
+"lung.T cell",28,1,11,16,9,1,4,4
+"liver.mature NK T cell",176,31,82,63,7,2,3,2
+"liver.hepatocyte",1001,240,383,378,7,2,3,2
+"liver.endothelial cell of hepatic sinusoid",617,189,330,98,7,2,3,2
+"liver.Kupffer cell",262,47,107,108,7,2,3,2
+"liver.myeloid leukocyte",209,17,76,116,7,2,3,2
+"liver.B cell",210,34,119,57,7,2,3,2
+"liver.neutrophil",30,4,16,10,6,1,3,2
+"liver.T cell",45,2,21,22,6,1,3,2
+"liver.NK cell",42,5,20,17,7,2,3,2
+"liver.CD4-positive, alpha-beta T cell",42,1,13,28,5,1,2,2
+"muscle.skeletal muscle satellite cell",1833,535,683,615,14,6,4,4
+"muscle.macrophage",311,54,205,52,14,6,4,4
+"muscle.mesenchymal stem cell",935,264,354,317,14,6,4,4
+"muscle.endothelial cell",453,141,172,140,14,6,4,4
+"muscle.B cell",187,70,70,47,14,6,4,4
+"muscle.T cell",136,38,37,61,14,6,4,4
+"brain.ependymal cell",53,10,39,4,8,3,4,1
+"brain.astrocyte",496,358,107,31,9,4,4,1
+"brain.oligodendrocyte",1932,1234,564,134,9,4,4,1
+"brain.endothelial cell",2038,529,1358,151,9,4,4,1
+"brain.neuron",353,135,123,95,9,4,4,1
+"brain.medium spiny neuron",103,89,11,3,7,4,2,1
+"brain.interneuron",216,63,98,55,8,4,3,1
+"brain.oligodendrocyte precursor cell",251,145,94,12,9,4,4,1
+"brain.neuronal stem cell",84,71,12,1,9,4,4,1
+"brain.Bergmann glial cell",50,27,14,9,7,3,3,1
+"brain.brain pericyte",462,157,265,40,9,4,4,1
+"brain.CD8-positive, alpha-beta T cell",103,11,56,36,8,3,4,1
+"brain.mature NK T cell",16,5,4,7,5,1,3,1
+"brain.neuroepithelial cell",151,4,140,7,6,1,4,1
+"brain.T cell",58,8,30,20,9,4,4,1
+"skin.basal cell of epidermis",1320,678,395,247,10,6,2,2
+"skin.epidermal cell",445,260,97,88,10,6,2,2
+"skin.bulge keratinocyte",2169,1370,422,377,10,6,2,2
+"skin.keratinocyte stem cell",35,28,5,2,9,6,2,1
+"skin.T cell",24,6,10,8,8,4,2,2
+"kidney.macrophage",152,42,42,68,14,6,4,4
+"kidney.fenestrated cell",268,113,50,105,14,6,4,4
+"kidney.mesangial cell",93,32,42,19,13,6,3,4
+"kidney.kidney loop of Henle ascending limb epithelial cell",146,75,32,39,14,6,4,4
+"kidney.kidney collecting duct principal cell",157,55,42,60,14,6,4,4
+"kidney.epithelial cell of proximal tubule",393,46,126,221,14,6,4,4
+"kidney.kidney collecting duct epithelial cell",445,124,251,70,14,6,4,4
+"kidney.B cell",84,6,61,17,12,4,4,4
+"kidney.T cell",79,9,22,48,12,4,4,4
