@@ -2,7 +2,7 @@
 
 ## Description 
 
-This repository contains code used for the analyses of the manuscript entitled:
+This repository contains code used for the analyses in the manuscript entitled:
 
 [**"Under the shadow: Old-biased genes are subject to weak purifying selection at both the tissue and cell type-specific levels"**](https://www.biorxiv.org/)
 
