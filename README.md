@@ -4,7 +4,7 @@
 
 This repository contains code used for the analyses in the manuscript entitled:
 
-[**"Under the shadow: Old-biased genes are subject to weak purifying selection at both the tissue and cell type-specific levels"**](https://www.biorxiv.org/)
+[**"Under the shadow: Old-biased genes are subject to weak purifying selection at both the tissue and cell type-specific levels"**](https://www.biorxiv.org/content/10.1101/2022.09.21.508695v1.full)
 
 Any finding reported on the manuscript can be reproduced using the contents of the repository. 
 
