@@ -1,5 +1,6 @@
+# Code used to produce Supp. Figure 3
 
-#Loading required packages
+#Loading the required packages
 library(ggplot2)
 library(gridExtra)
 library(tidyr)
@@ -8,75 +9,100 @@ library(patchwork)
 library(RColorBrewer)
 library(ggpubr)
 
-#Loading up Results 
-
+#Loading up the Results 
+load("gallus_gallus/R/results/Results_GSE114129.RData") # chicken
+load("drosophila_melanogaster/R/results/Results_pacifico.RData") # drosophila
+load("n_furzeri/GSE66712/R/results/Results_GSE66712.RData") # killifish
+load("mus_musculus/GSE99791/R/results/Results_GSE99791.RData") #mouse astrocyte
 load("naked_mole_rat/GSE30337/R/results/Results_GSE30337.RData") #NMR 
 
-#dataframes
-GSE30337_brain_cons <- data.frame(cons_val = 
-                                    c(-log(Results_GSE30337[["brain"]][["deg_list"]][["dec_sig"]][["dec_genes_dnds"]][["dNdS"]]),
-                                      -log(Results_GSE30337[["brain"]][["deg_list"]][["inc_sig"]][["inc_genes_dnds"]][["dNdS"]])),
-                                  type = 
-                                    c(rep("dec", length(Results_GSE30337[["brain"]][["deg_list"]][["dec_sig"]][["dec_genes_dnds"]][["dNdS"]])), 
-                                      rep("inc", length(Results_GSE30337[["brain"]][["deg_list"]][["inc_sig"]][["inc_genes_dnds"]][["dNdS"]]))),
-                                  dataset = "H. glaber brain")
+Results <- list(Results_GSE114129 = Results_GSE114129, Results_GSE30337 = Results_GSE30337,
+                Results_GSE66712 = Results_GSE66712, Results_GSE99791 = Results_GSE99791,
+                Results_pacifico = Results_pacifico)
 
-GSE30337_kidney_cons <- data.frame(cons_val = 
-                                     c(-log(Results_GSE30337[["kidney"]][["deg_list"]][["dec_sig"]][["dec_genes_dnds"]][["dNdS"]]),
-                                       -log(Results_GSE30337[["kidney"]][["deg_list"]][["inc_sig"]][["inc_genes_dnds"]][["dNdS"]])),
-                                   type = 
-                                     c(rep("dec", length(Results_GSE30337[["kidney"]][["deg_list"]][["dec_sig"]][["dec_genes_dnds"]][["dNdS"]])), 
-                                       rep("inc", length(Results_GSE30337[["kidney"]][["deg_list"]][["inc_sig"]][["inc_genes_dnds"]][["dNdS"]]))),
-                                   dataset = "H. glaber kidney")
+inc_dnds <- lapply(Results, function(x){
+  
+  inc_dnds <- sapply(x, function(tissue){
+    tissue[["deg_list"]][["inc_sig"]][["inc_genes_dnds"]][["dNdS"]]
+  })
+})
 
-GSE30337_liver_cons <- data.frame(cons_val = 
-                                    c(-log(Results_GSE30337[["liver"]][["deg_list"]][["dec_sig"]][["dec_genes_dnds"]][["dNdS"]]),
-                                      -log(Results_GSE30337[["liver"]][["deg_list"]][["inc_sig"]][["inc_genes_dnds"]][["dNdS"]])),
-                                  type = 
-                                    c(rep("dec", length(Results_GSE30337[["liver"]][["deg_list"]][["dec_sig"]][["dec_genes_dnds"]][["dNdS"]])), 
-                                      rep("inc", length(Results_GSE30337[["liver"]][["deg_list"]][["inc_sig"]][["inc_genes_dnds"]][["dNdS"]]))),
-                                  dataset = "H. glaber liver")
-NMR_cons <- rbind(GSE30337_brain_cons, GSE30337_kidney_cons, GSE30337_liver_cons)
 
-NMR_t_p <- data.frame(dataset = c("H. glaber brain", "H. glaber kidney", "H. glaber liver"), 
-                      p = c(signif(t.test(-log(Results_GSE30337[["brain"]][["deg_list"]][["dec_sig"]][["dec_genes_dnds"]][["dNdS"]]),
-                                                             -log(Results_GSE30337[["brain"]][["deg_list"]][["inc_sig"]][["inc_genes_dnds"]][["dNdS"]]))$p.val, 3),
-                                signif(t.test(-log(Results_GSE30337[["kidney"]][["deg_list"]][["dec_sig"]][["dec_genes_dnds"]][["dNdS"]]),
-                                                             -log(Results_GSE30337[["kidney"]][["deg_list"]][["inc_sig"]][["inc_genes_dnds"]][["dNdS"]]))$p.val, 3),
-                                signif(t.test(-log(Results_GSE30337[["liver"]][["deg_list"]][["dec_sig"]][["dec_genes_dnds"]][["dNdS"]]),
-                                                             -log(Results_GSE30337[["liver"]][["deg_list"]][["inc_sig"]][["inc_genes_dnds"]][["dNdS"]]))$p.val, 3)))
-NMR_t_p$label <- paste0("p == ", sub("e", "%*%10^", as.character(NMR_t_p$p)))
+dec_dnds <- lapply(Results, function(x){
+  dec_dnds <-sapply(x, function(tissue){
+    tissue[["deg_list"]][["dec_sig"]][["dec_genes_dnds"]][["dNdS"]]
+  })
+})
 
-NMR_cons_plot <- ggplot(NMR_cons, aes(cons_val, fill = type)) + 
-  geom_density(alpha = 0.7)+
-  scale_x_continuous(limits = c(-2, 7))+
-  ylab("Density")+
+inc_dec_df <- rbind(
+  
+  data.frame(dnds = c(inc_dnds$Results_GSE114129, dec_dnds$Results_GSE114129),
+             class = c(rep("old-biased", length(inc_dnds$Results_GSE114129)),
+                       rep("young-biased", length(dec_dnds$Results_GSE114129))),
+             organism = "G. gallus brain",
+             tissue = "brain"),
+  
+  data.frame(dnds = c(inc_dnds$Results_GSE66712$liver, dec_dnds$Results_GSE66712$liver),
+             class = c(rep("old-biased", length(inc_dnds$Results_GSE66712$liver)),
+                       rep("young-biased", length(dec_dnds$Results_GSE66712$liver))),
+             organism = "N. furzeri liver",
+             tissue = "liver"),
+  
+  data.frame(dnds = c(inc_dnds$Results_GSE66712$skin, dec_dnds$Results_GSE66712$skin),
+             class = c(rep("old-biased", length(inc_dnds$Results_GSE66712$skin)),
+                       rep("young-biased", length(dec_dnds$Results_GSE66712$skin))),
+             organism = "N. furzeri skin",
+             tissue = "skin"),
+  
+  data.frame(dnds = c(inc_dnds$Results_pacifico, dec_dnds$Results_pacifico),
+             class = c(rep("old-biased", length(inc_dnds$Results_pacifico)),
+                       rep("young-biased", length(dec_dnds$Results_pacifico))),
+             organism = "D. melanogaster brain",
+             tissue = "brain"), 
+  
+  data.frame(dnds = c(inc_dnds$Results_GSE99791$cerebellum, dec_dnds$Results_GSE99791$cerebellum),
+             class = c(rep("old-biased", length(inc_dnds$Results_GSE99791$cerebellum)),
+                       rep("young-biased", length(dec_dnds$Results_GSE99791$cerebellum))),
+             organism = "M. musculus astrocyte (cerebellum)",
+             tissue = "astrocyte"), 
+  
+  data.frame(dnds = c(inc_dnds$Results_GSE99791$hypothalamus, dec_dnds$Results_GSE99791$hypothalamus),
+             class = c(rep("old-biased", length(inc_dnds$Results_GSE99791$hypothalamus)),
+                       rep("young-biased", length(dec_dnds$Results_GSE99791$hypothalamus))),
+             organism = "M. musculus astrocyte (hypothalamus)",
+             tissue = "astrocyte")
+  
+)
+
+
+supp_figure3 <- ggplot(data= inc_dec_df, 
+                       aes(x = class, y = dnds)) +
+  geom_boxplot(aes(fill = class), shape = 21, show.legend = T)+
+  scale_y_continuous(name="dN/dS")+
+  scale_x_discrete(guide = guide_axis(n.dodge=2))+
   theme_bw()+
-  theme(legend.title = element_blank(),
+  xlab("")+
+  scale_color_manual(values = c("#1B9E77", "#D95F02", "#7570B3"))+
+  scale_fill_manual(values=c("#6699CC", "#888888"))+
+  theme(legend.title = element_blank(), 
         legend.text=element_text(size=11),
-        axis.text.x = element_text(size = 13),
+        axis.text.x = element_text(size = 0), 
+        axis.title.y = element_text(size=15), 
         axis.text.y = element_text(size = 13),
-        axis.title.y = element_text(size=15),
-        axis.title.x = element_text(size = 15),
-        strip.text = element_text(size=15),
+        strip.text = element_text(size=11, face = "italic"),
         strip.background = element_rect(fill='white', size = 1))+
-  scale_fill_manual(values=c("#888888", "#6699CC"), labels = c("Young-biased","Old-biased"))+
-  xlab("Conservation Score")+
-  facet_wrap(~dataset, ncol = 1)+
-  geom_text(data    = NMR_t_p,
-            mapping = aes(x = Inf, y = Inf, label = label),
-            vjust = 2,
-            hjust = 1.1,
-            inherit.aes = FALSE,
-            size = 4.4,
-            parse =T)
+  facet_wrap(~ organism) +
+  guides(fill = guide_legend(override.aes = list(size = 7, shape = 22)))+ 
+  stat_compare_means(method = "wilcox.test",
+                      label.x = 1.3, 
+                      label.y = -0.05)
 
-ggsave("suppFig3-NMR-cons-density.png", plot = NMR_cons_plot, device = png,
+ggsave("suppFig3-dnds-difference-bulk.png", plot = supp_figure3, device = png,
        path = "results_graphs/",
-       scale = 1, width = 10, height = 12, units = "in", dpi = 300)
-ggsave("suppFig3-NMR-cons-density.tiff", plot = NMR_cons_plot, device = "tiff",
+       scale = 1, width = 10, height = 5, units = "in", dpi = 300)
+ggsave("suppFig3-dnds-difference-bulk.tiff", plot = supp_figure3, device = "tiff",
        path = "results_graphs/", type = "cairo",
-       scale = 1, width = 10, height = 12, units = "in", dpi = 300)
-ggsave("suppFig3-NMR-cons-density.pdf", plot = NMR_cons_plot, device = "pdf",
+       scale = 1, width = 10, height = 5, units = "in", dpi = 300)
+ggsave("suppFig3-dnds-difference-bulk.pdf", plot = supp_figure3, device = "pdf",
        path = "results_graphs/",
-       scale = 1, width = 10, height = 12, units = "in", dpi = 300)
+       scale = 1, width = 10, height = 5, units = "in", dpi = 300)

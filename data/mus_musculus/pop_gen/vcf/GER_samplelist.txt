@@ -1,0 +1,8 @@
+Mmd_GER1_TP1.variant2_Mmd_GER1_TP1.variant2
+Mmd_GER2_TP121B.variant2_Mmd_GER2_TP121B.variant2
+Mmd_GER3_TP17-2.variant2_Mmd_GER3_TP17-2.variant2
+Mmd_GER4_TP3-92.variant2_Mmd_GER4_TP3-92.variant2
+Mmd_GER5_TP4a.variant2_Mmd_GER5_TP4a.variant2
+Mmd_GER6_TP51D.variant2_Mmd_GER6_TP51D.variant2
+Mmd_GER7_TP7-10F1A2.variant2_Mmd_GER7_TP7-10F1A2.variant2
+Mmd_GER8_TP81B.variant2_Mmd_GER8_TP81B.variant2

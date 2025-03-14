@@ -19,8 +19,8 @@ GSE99791_df <- data.frame(results = c(as.numeric(Results_GSE99791[["cerebellum"]
                               type = rep(c("Differentially Expressed Genes", 
                                            "All Genes"), each = 6))
 GSE99791_df$type <- factor(GSE99791_df$type, 
-                               levels = c("Differentially Expressed Genes",
-                                          "All Genes"))
+                               levels = c("All Genes",
+                                          "Differentially Expressed Genes"))
 GSE99791_df_text <- data.frame(
   rho = c(paste0("rho = ", signif( cor(as.numeric(Results_GSE99791[["cerebellum"]][["sig_results"]]), Results_GSE99791[["cerebellum"]][["age"]], method = "spearman"), 2 ) ), 
           paste0("rho = ", signif( cor(as.numeric(Results_GSE99791[["cerebellum"]][["all_results"]]), Results_GSE99791[["cerebellum"]][["age"]], method = "spearman"), 2 ) )),

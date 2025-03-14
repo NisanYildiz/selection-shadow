@@ -91,6 +91,7 @@ dNdS <- (dnds$mgallopavo_homolog_dn / dnds$mgallopavo_homolog_ds) #calculating d
 dnds <- cbind(dnds, dNdS)#adding dn/ds vector to the dataframe 
 ###removing duplicate gene ids, leaves only 1to1 orth. genes
 dnds <- dnds[!((duplicated(dnds$ensembl_gene_id)) | (duplicated(dnds$ensembl_gene_id, fromLast = T))) ,]
+dnds <- dnds[!((duplicated(dnds$mgallopavo_homolog_ensembl_gene)) | (duplicated(dnds$mgallopavo_homolog_ensembl_gene, fromLast = T))) ,]
 ###removing genes with dnds > 0.8
 dnds <- dnds[dnds$dNdS < 0.8,]
 

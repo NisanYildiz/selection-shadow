@@ -1,0 +1,13 @@
+{
+	"n_targets": 28756,
+	"n_bootstraps": 0,
+	"n_processed": 62460327,
+	"n_pseudoaligned": 34395241,
+	"n_unique": 20655678,
+	"p_pseudoaligned": 55.1,
+	"p_unique": 33.1,
+	"kallisto_version": "0.50.0",
+	"index_version": 12,
+	"start_time": "Fri Oct  6 15:31:39 2023",
+	"call": "/usr/local/sw/kallisto/build/src/kallisto quant --threads=40 -i /mnt/NEOGENE4/projects/melih_2020/kallisto/gallus_gallus/gallus_gallus.idx -o /mnt/NEOGENE4/projects/melih_2020/kallisto/gallus_gallus/quant/SRR7127899 /mnt/NEOGENE1/projects/aneuploidy_2016/Second/scWGA/MA_2021/GSE114129/data/processed/trimmed/TSRR7127899_1.fastq /mnt/NEOGENE1/projects/aneuploidy_2016/Second/scWGA/MA_2021/GSE114129/data/processed/trimmed/TSRR7127899_2.fastq"
+}

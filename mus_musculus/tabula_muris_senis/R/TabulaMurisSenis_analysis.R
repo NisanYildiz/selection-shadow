@@ -124,6 +124,7 @@ dNdS <- (dnds$rnorvegicus_homolog_dn / dnds$rnorvegicus_homolog_ds) #calculating
 dnds <- cbind(dnds, dNdS)#adding dn/ds vector to the dataframe 
 ###removing duplicate gene ids, leaves only 1to1 orth. genes
 dnds <- dnds[!((duplicated(dnds$ensembl_gene_id)) | (duplicated(dnds$ensembl_gene_id, fromLast = T))) ,]
+dnds <- dnds[!((duplicated(dnds$rnorvegicus_homolog_ensembl_gene)) | (duplicated(dnds$rnorvegicus_homolog_ensembl_gene, fromLast = T))) ,]
 ###removing genes with dnds > 0.8
 dnds <- dnds[dnds$dNdS < 0.8,]
 
@@ -349,6 +350,7 @@ table <- sapply(tissues, function(tissue){
   dnds = dndsCommon(IDconv(expression_list[[tissue]][[1]], gene_ids), dnds)$dnds #tissue level intersection
   ###removing duplicate gene ids, leaves only 1to1 orth. genes
   dnds <- dnds[!((duplicated(dnds$ensembl_gene_id)) | (duplicated(dnds$ensembl_gene_id, fromLast = T))) ,]
+  dnds <- dnds <- dnds[!((duplicated(dnds$rnorvegicus_homolog_ensembl_gene)) | (duplicated(dnds$rnorvegicus_homolog_ensembl_gene, fromLast = T))) ,]
   n_1to1 <- nrow(dnds)
   
   dnds <- dnds[!(dnds$rnorvegicus_homolog_dn == 0),] #removing 0 dN values

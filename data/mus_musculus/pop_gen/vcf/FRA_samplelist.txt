@@ -1,0 +1,8 @@
+Mmd_FRA1_14.variant_Mmd_FRA1_14.variant
+Mmd_FRA2_15B.variant_Mmd_FRA2_15B.variant
+Mmd_FRA3_16B.variant_Mmd_FRA3_16B.variant
+Mmd_FRA4_18B.variant_Mmd_FRA4_18B.variant
+Mmd_FRA5_B2C.variant_Mmd_FRA5_B2C.variant
+Mmd_FRA6_C1.variant_Mmd_FRA6_C1.variant
+Mmd_FRA7_E1.variant_Mmd_FRA7_E1.variant
+Mmd_FRA8_F1B.variant_Mmd_FRA8_F1B.variant
