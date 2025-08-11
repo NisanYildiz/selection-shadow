@@ -87,6 +87,32 @@ expression_list <- lapply(tissues, function(x){
     rownames(exp_all) <- exp_all$rownames 
     exp_all <- subset(exp_all, select = -c(rownames))
     
+    exp_all[setdiff(genes, rownames(exp_all)), ] <- NA
+    
+    #setting NA values to zero
+    exp_all[is.na(exp_all)] <- 0
+    
+    exp_all
+  })
+  
+  
+})
+
+expression_list_sep <- lapply(tissues, function(x){
+  lapply(common_cell_types_per_tissue[[x]], function(y){
+    exp_3m <- as.data.frame(celltype_perind_3m[[x]][[y]])
+    exp_3m$rownames <- rownames(exp_3m)
+    exp_18m <- as.data.frame(celltype_perind_18m[[x]][[y]])
+    exp_18m$rownames <- rownames(exp_18m)
+    exp_24m <-  as.data.frame(celltype_perind_24m[[x]][[y]])
+    exp_24m$rownames <- rownames(exp_24m)
+    
+    exp_all <- full_join(exp_3m, exp_18m, by = "rownames")
+    rownames(exp_all) <- exp_all$rownames 
+    exp_all <- full_join(exp_all, exp_24m, by = "rownames")
+    rownames(exp_all) <- exp_all$rownames 
+    exp_all <- subset(exp_all, select = -c(rownames))
+    
     #setting NA values to zero
     exp_all[is.na(exp_all)] <- 0
     
@@ -97,10 +123,11 @@ expression_list <- lapply(tissues, function(x){
 })
 
 names(expression_list) <- tissues
+names(expression_list_sep) <- tissues
 
 for(tissue in tissues){
   names(expression_list[[tissue]]) <- common_cell_types_per_tissue[[tissue]]
-  
+  names(expression_list_sep[[tissue]]) <- common_cell_types_per_tissue[[tissue]]
 }
 
 
@@ -171,11 +198,12 @@ DEG_genes <- function(expMatrix, ageVector, rhoCutoff, dnds){
   Aging_exp_cor <- cbind(Aging_exp_cor, adj_p.val)
   colnames(Aging_exp_cor) = c("rho", "p", "adjusted_p")
   
-  Aging_exp_cor <- Aging_exp_cor[complete.cases(Aging_exp_cor), ]
-  
   all_genes_cor <- Aging_exp_cor
   all_genes_exp <- expMatrix[rownames(expMatrix) %in% rownames(all_genes_cor),]
   all_genes_dnds <- dnds[dnds$ensembl_gene_id %in% rownames(all_genes_cor),]
+  
+  #removing genes not expressed at all
+  Aging_exp_cor <- Aging_exp_cor[complete.cases(Aging_exp_cor), ]
   
   selected_genes_cor <- Aging_exp_cor[Aging_exp_cor[,1] > rhoCutoff | Aging_exp_cor [,1] < -(rhoCutoff),]
   selected_genes_exp <- expMatrix[rownames(expMatrix) %in% rownames(selected_genes_cor),]
@@ -193,7 +221,7 @@ DEG_genes <- function(expMatrix, ageVector, rhoCutoff, dnds){
   nonsig_genes_exp <- expMatrix[rownames(expMatrix) %in% rownames(nonsig_genes_cor),]
   nonsig_genes_dnds <- dnds[dnds$ensembl_gene_id %in% rownames(nonsig_genes_cor),]
   
-  listy <- list(Aging_exp_cor = Aging_exp_cor, 
+  listy <- list(Aging_exp_cor = all_genes_cor, 
                 All = list(all_genes_cor = all_genes_cor, all_genes_exp = all_genes_exp, all_genes_dnds = all_genes_dnds),
                 Non_sig = list(nonsig_genes_cor = nonsig_genes_cor, nonsig_genes_exp = nonsig_genes_exp, nonsig_genes_dnds = nonsig_genes_dnds), 
                 All_sig = list(sig_genes_cor = selected_genes_cor, sig_genes_exp = selected_genes_exp, sig_genes_dnds = selected_genes_dnds), 
@@ -347,7 +375,7 @@ dnds <- dnds[!(is.na(dnds$rnorvegicus_homolog_dn)),] #removing NA dN values
 
 table <- sapply(tissues, function(tissue){
   
-  dnds = dndsCommon(IDconv(expression_list[[tissue]][[1]], gene_ids), dnds)$dnds #tissue level intersection
+  dnds = dndsCommon(IDconv(expression_list_sep[[tissue]][[1]], gene_ids), dnds)$dnds #tissue level intersection
   ###removing duplicate gene ids, leaves only 1to1 orth. genes
   dnds <- dnds[!((duplicated(dnds$ensembl_gene_id)) | (duplicated(dnds$ensembl_gene_id, fromLast = T))) ,]
   dnds <- dnds <- dnds[!((duplicated(dnds$rnorvegicus_homolog_ensembl_gene)) | (duplicated(dnds$rnorvegicus_homolog_ensembl_gene, fromLast = T))) ,]
@@ -368,7 +396,6 @@ table <- sapply(tissues, function(tissue){
 
 cons_metric_table <- t(table)
 colnames(cons_metric_table) = c("n_1to1", "dnds >= 0.8", "n_final", "mean", "median")
-
 
 
 
@@ -492,3 +519,109 @@ n_table <- data.frame(n_cells = unlist(n_cells),
 write.csv(n_table, file = "supplements/tabula_afterfilter_samplesize.csv",quote = T)
 
 ####add n_cells_3m, n_cells_18m, n_cells_24m and n_indv_3m, n_indv_18m, n_indv_24m
+
+
+### Fisher's test for overrepresentation of immune genes in old-biased low-conserv 
+# and young-biased high-conserv genes
+
+#using the dnds of a random cell, bcs all the same set
+dnds <- Results_tabula_muris_senis[["lung"]][["bronchial smooth muscle cell"]][["dnds_exp_list"]][["dnds"]]
+low_conserv_genes = dnds$ensembl_gene_id[dnds$dNdS > quantile(dnds$dNdS, 0.75)] 
+high_conserv_genes = dnds$ensembl_gene_id[dnds$dNdS < quantile(dnds$dNdS, 0.25)]
+
+
+immune_gene_results <- AnnotationDbi::select(org.Mm.eg.db, keys=c("GO:0002376"), columns = c('ENSEMBL'), keytype = "GOALL")
+immune_gene_ids <- unique(immune_gene_results$ENSEMBL)
+
+
+
+
+fishers_test_results_inc <- data.frame()
+
+for (tissue in names(Results_tabula_muris_senis)){
+  
+  for (cell_type in names(Results_tabula_muris_senis[[tissue]])){
+    
+    deg_list <- Results_tabula_muris_senis[[tissue]][[cell_type]][["deg_list"]]
+    inc_genes <- deg_list[["inc_sig"]][["inc_genes_dnds"]][["ensembl_gene_id"]]
+    
+    inc_low_conserv <- intersect(inc_genes, low_conserv_genes)
+    inc_remain <- setdiff(inc_genes, low_conserv_genes)
+    
+    
+    inc_low_conserv_immune <- intersect(inc_low_conserv, immune_gene_ids)
+    inc_low_conserv_non_immune <- setdiff(inc_low_conserv, immune_gene_ids)
+    
+    inc_remain_immune <- intersect(inc_remain, immune_gene_ids)
+    inc_remain_non_immune <- setdiff(inc_remain, immune_gene_ids)
+    
+    cont_table <- matrix(c(length(inc_remain_immune), length(inc_remain_non_immune)
+                           , length(inc_low_conserv_immune), length(inc_low_conserv_non_immune))
+                         , nrow = 2,
+                         dimnames =
+                           list(c("immune", "non_immune"),
+                                c("inc_rest", "inc_low_conserv")))
+    
+    
+    fisher_result <- fisher.test(cont_table)
+    values <- data.frame(tissue, cell_type, fisher_result$estimate, fisher_result$p.value)
+    colnames(values) <- c("tissue", "cell_type", "odds_ratio", "p_val")
+    
+    fishers_test_results_inc <- rbind(fishers_test_results_inc, values)
+    
+    
+  }
+  
+}
+
+fishers_test_results_inc$p_adj <- p.adjust(fishers_test_results_inc$p_val, "BH")
+
+
+fishers_test_results_dec <- data.frame()
+
+for (tissue in names(Results_tabula_muris_senis)){
+  
+  for (cell_type in names(Results_tabula_muris_senis[[tissue]])){
+    
+    deg_list <- Results_tabula_muris_senis[[tissue]][[cell_type]][["deg_list"]]
+    dec_genes <- deg_list[["dec_sig"]][["dec_genes_dnds"]][["ensembl_gene_id"]]
+    
+    dec_high_conserv <- intersect(dec_genes, high_conserv_genes)
+    dec_remain <- setdiff(dec_genes, high_conserv_genes)
+    
+    
+    dec_high_conserv_immune <- intersect(dec_high_conserv, immune_gene_ids)
+    dec_high_conserv_non_immune <- setdiff(dec_high_conserv, immune_gene_ids)
+    
+    dec_remain_immune <- intersect(dec_remain, immune_gene_ids)
+    dec_remain_non_immune <- setdiff(dec_remain, immune_gene_ids)
+    
+    cont_table <- matrix(c(length(dec_remain_immune), length(dec_remain_non_immune)
+                           , length(dec_high_conserv_immune), length(dec_high_conserv_non_immune))
+                         , nrow = 2,
+                         dimnames =
+                           list(c("immune", "non_immune"),
+                                c("dec_rest", "dec_high_conserv")))
+    
+    
+    fisher_result <- fisher.test(cont_table)
+    values <- data.frame(tissue, cell_type, fisher_result$estimate, fisher_result$p.value)
+    colnames(values) <- c("tissue", "cell_type", "odds_ratio", "p_val")
+    
+    fishers_test_results_dec <- rbind(fishers_test_results_dec, values)
+    
+    
+  }
+  
+}
+fishers_test_results_dec$p_adj <- p.adjust(fishers_test_results_dec$p_val, "BH")
+
+
+
+
+mean(fishers_test_results_inc$odds_ratio)
+mean(fishers_test_results_inc$odds_ratio[fishers_test_results_inc$p_adj < 0.1])
+
+mean(fishers_test_results_dec$odds_ratio[fishers_test_results_dec$odds_ratio != Inf])
+
+

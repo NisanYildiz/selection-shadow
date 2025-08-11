@@ -7,6 +7,7 @@ library(tidyr)
 library(dplyr)
 library(patchwork)
 library(RColorBrewer)
+library(latex2exp)
 
 #Loading up the Results 
 load("gallus_gallus/R/results/Results_GSE114129.RData") # chicken
@@ -29,8 +30,8 @@ source("functions.R")
 gallus_gene_names <- rownames(Results_GSE114129[["brain"]][["dnds_exp_list"]][["exp_matrix"]])
 gallus_DE_gene_names <- rownames(Results_GSE114129[["brain"]][["deg_list"]][["All_sig"]][["sig_genes_exp"]])
 
-GSE114129_exp_dnds_cor <- data.frame(exp = c(log(Results_GSE114129[["brain"]][["dnds_exp_list"]][["exp_matrix"]][(gallus_gene_names %in% gallus_DE_gene_names),1] + 10),
-                                             log(Results_GSE114129[["brain"]][["dnds_exp_list"]][["exp_matrix"]][(gallus_gene_names %in% gallus_DE_gene_names),13] + 10)),
+GSE114129_exp_dnds_cor <- data.frame(exp = c(log(Results_GSE114129[["brain"]][["dnds_exp_list"]][["exp_matrix"]][(gallus_gene_names %in% gallus_DE_gene_names),1] + 0.01),
+                                             log(Results_GSE114129[["brain"]][["dnds_exp_list"]][["exp_matrix"]][(gallus_gene_names %in% gallus_DE_gene_names),13] + 0.01)),
                                      cons= c(-log(Results_GSE114129[["brain"]][["dnds_exp_list"]][["dnds"]][gallus_gene_names %in% gallus_DE_gene_names,][["dNdS"]]),
                                              -log(Results_GSE114129[["brain"]][["dnds_exp_list"]][["dnds"]][gallus_gene_names %in% gallus_DE_gene_names,][["dNdS"]])),
                                      type= rep(c("100 days old", 
@@ -73,7 +74,7 @@ GSE114129_df_text <- data.frame(
 
 GSE114129_df_text$p_sci <- paste0("p == ", sub("e", "%*%10^", as.character(GSE114129_df_text$p)))
 
-##For Figure 1B
+##For Figure 1C
 
 rho_chick = c(signif( cor(as.numeric(Results[["Results_GSE114129"]][["brain"]][["sig_results"]]), Results[["Results_GSE114129"]][["brain"]][["age"]], method = "spearman"), 2 ), 
               signif( cor(as.numeric(Results[["Results_GSE114129"]][["brain"]][["all_results"]]), Results[["Results_GSE114129"]][["brain"]][["age"]], method = "spearman"), 2 ) )
@@ -124,7 +125,7 @@ exp_dnds <-
   scale_color_manual(values = c("#1B9E77"))+
   ggtitle(expression(paste(italic("G. gallus")," brain, DE genes")))+
   xlab("Conservation Score")+
-  ylab("log(Expression + 10)")+
+  ylab(expression(log[e](Expression + 0.01)))+
   theme(legend.title = element_blank(),
         legend.text=element_text(size=11),
         plot.title = element_text(size = 15),

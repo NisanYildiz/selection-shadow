@@ -32,8 +32,8 @@ GSE99791_df_text <- data.frame(
            "All Genes")
 )
 GSE99791_df_text_wilcox <- data.frame(
-  rho = c(paste0("p = ", signif( wilcox.test(as.numeric(Results_GSE99791[["cerebellum"]][["sig_results"]][Results_GSE99791[["cerebellum"]][["age"]] == 4]), as.numeric(Results_GSE99791[["cerebellum"]][["sig_results"]][Results_GSE99791[["cerebellum"]][["age"]] == 24]), alternative = "greater")$p.val, 2 ) ), 
-          paste0("p = ", signif( wilcox.test(as.numeric(Results_GSE99791[["cerebellum"]][["all_results"]][Results_GSE99791[["cerebellum"]][["age"]] == 4]), as.numeric(Results_GSE99791[["cerebellum"]][["all_results"]][Results_GSE99791[["cerebellum"]][["age"]] == 24]), alternative = "greater")$p.val, 2 ) )),
+  p = c(paste0("MWU p = ", signif( wilcox.test(as.numeric(Results_GSE99791[["cerebellum"]][["sig_results"]][Results_GSE99791[["cerebellum"]][["age"]] == 4]), as.numeric(Results_GSE99791[["cerebellum"]][["sig_results"]][Results_GSE99791[["cerebellum"]][["age"]] == 24]))$p.val, 2 ) ), 
+          paste0("MWU p = ", signif( wilcox.test(as.numeric(Results_GSE99791[["cerebellum"]][["all_results"]][Results_GSE99791[["cerebellum"]][["age"]] == 4]), as.numeric(Results_GSE99791[["cerebellum"]][["all_results"]][Results_GSE99791[["cerebellum"]][["age"]] == 24]))$p.val, 2 ) )),
   gene_no = c(paste0(length(Results_GSE99791[["cerebellum"]][["deg_list"]][["All_sig"]][["sig_genes_exp"]][,1]), " genes"),
               paste0(length(Results_GSE99791[["cerebellum"]][["deg_list"]][["All"]][["all_genes_exp"]][,1]), " genes")),
   type = c("Differentially Expressed Genes",
@@ -58,9 +58,9 @@ figure4 <- ggplot(data = GSE99791_df, aes(age, results)) +
         strip.text = element_text(size=15),
         strip.background = element_rect(fill='white', size = 1))+
   facet_wrap(~type)+
-  geom_text(data    = GSE99791_df_text,
+  geom_text(data    = GSE99791_df_text_wilcox,
             mapping = aes(x = -Inf, y = -Inf, label = p),
-            hjust   = -0.12,
+            hjust   = -0.07,
             vjust   = -3,
             size = 4.4)+
   geom_text(data    = GSE99791_df_text,
@@ -74,6 +74,7 @@ figure4 <- ggplot(data = GSE99791_df, aes(age, results)) +
             hjust = 1.1,
             size = 4.4)
 
+figure4
 ggsave("figure4-astrocyte-transcriptome-cons-vs-age.png", plot = figure4, device = png,
        path = "results_graphs/",
        scale = 1, width = 10, height = 5, units = "in", dpi = 300)
